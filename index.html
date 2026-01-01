@@ -1,62 +1,127 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Mini App</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta charset="UTF-8" />
+  <title>Telegram Mini App</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <style>
-        body {
-            font-family: system-ui;
-            margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
-        }
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,.1);
-        }
-        button {
-            width: 100%;
-            padding: 14px;
-            background: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-        }
-    </style>
+  <!-- Telegram SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <style>
+    :root {
+      --bg-light: #f4f6fb;
+      --bg-dark: #0f172a;
+      --card-light: #ffffff;
+      --card-dark: #1e293b;
+      --text-light: #0f172a;
+      --text-dark: #f8fafc;
+      --primary: #3b82f6;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--bg-light);
+      color: var(--text-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      transition: all 0.3s ease;
+    }
+
+    body.dark {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    .card {
+      background: var(--card-light);
+      padding: 24px;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    body.dark .card {
+      background: var(--card-dark);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 22px;
+    }
+
+    p {
+      opacity: 0.8;
+      font-size: 14px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(59,130,246,0.4);
+    }
+
+    .footer {
+      margin-top: 16px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
 </head>
+
 <body>
+  <div class="card">
+    <h1 id="username">Welcome 👋</h1>
+    <p>Professional Telegram Mini App</p>
 
-<div class="card">
-    <h2>👋 Salom, <span id="name"></span></h2>
-    <p>ID: <span id="id"></span></p>
-    <button onclick="send()">Serverga yuborish</button>
-</div>
+    <button onclick="sendData()">🚀 Continue</button>
 
-<script>
+    <div class="footer">
+      Dark / Light auto theme
+    </div>
+  </div>
+
+  <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    document.getElementById("name").innerText = tg.initDataUnsafe.user.first_name;
-    document.getElementById("id").innerText = tg.initDataUnsafe.user.id;
-
-    function send() {
-        fetch("https://BACKEND_URL/save", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                user_id: tg.initDataUnsafe.user.id,
-                name: tg.initDataUnsafe.user.first_name
-            })
-        });
-        tg.showAlert("Yuborildi!");
+    // Theme
+    if (tg.colorScheme === "dark") {
+      document.body.classList.add("dark");
     }
-</script>
 
+    // User info
+    const user = tg.initDataUnsafe?.user;
+    if (user) {
+      document.getElementById("username").innerText =
+        `Hello, ${user.first_name} 👋`;
+    }
+
+    function sendData() {
+      tg.sendData(JSON.stringify({
+        action: "continue",
+        time: Date.now()
+      }));
+    }
+  </script>
 </body>
 </html>
