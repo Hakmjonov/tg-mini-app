@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>Mini App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <style>
+        body {
+            font-family: system-ui;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.1);
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>👋 Salom, <span id="name"></span></h2>
+    <p>ID: <span id="id"></span></p>
+    <button onclick="send()">Serverga yuborish</button>
+</div>
+
+<script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    document.getElementById("name").innerText = tg.initDataUnsafe.user.first_name;
+    document.getElementById("id").innerText = tg.initDataUnsafe.user.id;
+
+    function send() {
+        fetch("https://BACKEND_URL/save", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                user_id: tg.initDataUnsafe.user.id,
+                name: tg.initDataUnsafe.user.first_name
+            })
+        });
+        tg.showAlert("Yuborildi!");
+    }
+</script>
+
+</body>
+</html>
