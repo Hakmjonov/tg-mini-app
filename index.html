@@ -1,54 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uz">
 <head>
   <meta charset="UTF-8" />
   <title>Telegram Mini App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Telegram SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
   <style>
-    :root {
-      --bg-light: #f4f6fb;
-      --bg-dark: #0f172a;
-      --card-light: #ffffff;
-      --card-dark: #1e293b;
-      --text-light: #0f172a;
-      --text-dark: #f8fafc;
-      --primary: #3b82f6;
-    }
-
     body {
       margin: 0;
-      font-family: Inter, system-ui, sans-serif;
-      background: var(--bg-light);
-      color: var(--text-light);
+      font-family: system-ui, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       height: 100vh;
-      transition: all 0.3s ease;
-    }
-
-    body.dark {
-      background: var(--bg-dark);
-      color: var(--text-dark);
     }
 
     .card {
-      background: var(--card-light);
+      background: #1e293b;
       padding: 24px;
       border-radius: 18px;
-      width: 100%;
       max-width: 360px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      width: 100%;
       text-align: center;
-      transition: all 0.3s ease;
-    }
-
-    body.dark .card {
-      background: var(--card-dark);
     }
 
     h1 {
@@ -57,12 +33,19 @@
     }
 
     p {
-      opacity: 0.8;
       font-size: 14px;
+      opacity: 0.8;
+    }
+
+    a.channel {
+      display: block;
+      margin: 16px 0;
+      color: #38bdf8;
+      text-decoration: none;
+      font-weight: 600;
     }
 
     button {
-      margin-top: 20px;
       width: 100%;
       padding: 14px;
       border-radius: 14px;
@@ -72,55 +55,53 @@
       cursor: pointer;
       background: linear-gradient(135deg, #3b82f6, #2563eb);
       color: white;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(59,130,246,0.4);
-    }
-
-    .footer {
-      margin-top: 16px;
-      font-size: 12px;
-      opacity: 0.6;
+    .error {
+      margin-top: 12px;
+      color: #f87171;
+      font-size: 14px;
+      display: none;
     }
   </style>
 </head>
 
 <body>
   <div class="card">
-    <h1 id="username">Welcome 👋</h1>
-    <p>Professional Telegram Mini App</p>
+    <h1>Assalomu alaykum 👋</h1>
+    <p>Davom etish uchun kanalga majburiy obuna bo‘ling</p>
 
-    <button onclick="sendData()">🚀 Continue</button>
+    <a class="channel" href="https://t.me/+QCn7xHJ4_Qo3YTMy" target="_blank">
+      📢 Kanalga obuna bo‘lish
+    </a>
 
-    <div class="footer">
-      Dark / Light auto theme
+    <button onclick="checkSub()">✅ Obuna bo‘lib davom etish</button>
+
+    <div class="error" id="error">
+      ❌ Iltimos, avval kanalga obuna bo‘ling
     </div>
   </div>
 
   <script>
-    const tg = window.Telegram.WebApp;
+    const tg = Telegram.WebApp;
     tg.expand();
 
-    // Theme
-    if (tg.colorScheme === "dark") {
-      document.body.classList.add("dark");
-    }
+    async function checkSub() {
+      const res = await fetch("https://YOUR-BACKEND/check-sub", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          initData: tg.initData
+        })
+      });
 
-    // User info
-    const user = tg.initDataUnsafe?.user;
-    if (user) {
-      document.getElementById("username").innerText =
-        `Hello, ${user.first_name} 👋`;
-    }
+      const data = await res.json();
 
-    function sendData() {
-      tg.sendData(JSON.stringify({
-        action: "continue",
-        time: Date.now()
-      }));
+      if (data.subscribed) {
+        window.location.href = "https://t.me/hakmjonov_bot";
+      } else {
+        document.getElementById("error").style.display = "block";
+      }
     }
   </script>
 </body>
